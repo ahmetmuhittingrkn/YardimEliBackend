@@ -1,6 +1,7 @@
 package com.yazilim.afet.mapper;
 
 import com.yazilim.afet.dto.RegisterRequestDTO;
+import com.yazilim.afet.dto.PersonResponseDTO;
 import com.yazilim.afet.entity.Person;
 import com.yazilim.afet.entity.Stk;
 import com.yazilim.afet.enums.Role;
@@ -54,6 +55,10 @@ public class PersonMapper {
         }
 
         return person;
+    }
+
+    public PersonResponseDTO toResponseDTO(Person person) {
+        return new PersonResponseDTO(person);
     }
 
 }

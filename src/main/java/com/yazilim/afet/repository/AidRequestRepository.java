@@ -18,29 +18,26 @@ public interface AidRequestRepository extends JpaRepository<AidRequest, Long> {
             "JOIN art.aidType aidType " +
             "JOIN art.aidRequest ar " +
             "WHERE ar.location.id = :locationId " +
-            "GROUP BY aidType.name")
+            "GROUP BY aidType.name " +
+            "ORDER BY aidType.name")
     List<AidSummaryDTO> getAidSummaryByLocationId(@Param("locationId") Long locationId);
 
     @Query(value = """
-    SELECT ar.id AS request_id,
-           ar.description,
-           ar.created_at,
-           at.id,
-           art.quantity
-    FROM aid_requests ar
-    JOIN aid_request_types art ON ar.id = art.aid_request_id
-    JOIN aid_types at ON art.aid_type_id = at.id
-    WHERE ar.location_id = :locationId
-    ORDER BY ar.id
-    """, nativeQuery = true)
+            SELECT ar.id AS request_id,
+                   ar.description,
+                   ar.created_at,
+                   at.id,
+                   art.quantity
+            FROM aid_requests ar
+            JOIN aid_request_types art ON ar.id = art.aid_request_id
+            JOIN aid_types at ON art.aid_type_id = at.id
+            WHERE ar.location_id = :locationId
+            ORDER BY ar.created_at DESC, ar.id
+            """, nativeQuery = true)
     List<Object[]> getAidRequestDetailsByLocationId(@Param("locationId") Long locationId);
 
     Optional<AidRequest> findByIdAndPerson_Id(Long id, Long userId);
-
-
-
-
-
-
-
+    
+    @Query("SELECT ar FROM AidRequest ar WHERE ar.person.id = :personId ORDER BY ar.createdAt DESC")
+    List<AidRequest> findByPersonIdOrderByCreatedAtDesc(@Param("personId") Long personId);
 }

@@ -4,67 +4,51 @@ import com.yazilim.afet.dto.LoginRequestDTO;
 import com.yazilim.afet.dto.LoginResponseDTO;
 import com.yazilim.afet.dto.RegisterRequestDTO;
 import com.yazilim.afet.entity.Person;
-import com.yazilim.afet.entity.VerificationToken;
+import com.yazilim.afet.exception.BadRequestException;
+import com.yazilim.afet.exception.UnauthorizedException;
 import com.yazilim.afet.mapper.PersonMapper;
 import com.yazilim.afet.repository.PersonRepository;
-import com.yazilim.afet.repository.VerificationTokenRepository;
 import com.yazilim.afet.service.AuthService;
 import com.yazilim.afet.service.EmailService;
+import com.yazilim.afet.service.VerificationTokenService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
-
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final PersonRepository personRepository;
     private final ValidationService validationService;
     private final PersonMapper personMapper;
-    private final VerificationTokenRepository tokenRepository;
+    private final VerificationTokenService verificationTokenService;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthServiceImpl(PersonRepository personRepository, ValidationService validationService, PersonMapper personMapper, VerificationTokenRepository tokenRepository, EmailService emailService, PasswordEncoder passwordEncoder){
-        this.personRepository = personRepository;
-        this.validationService = validationService;
-        this.personMapper = personMapper;
-        this.tokenRepository = tokenRepository;
-        this.emailService = emailService;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-
     @Override
     public void register(RegisterRequestDTO registerRequestDTO) {
-
         validationService.validateUniqueFields(registerRequestDTO);
+        
         Person person = personMapper.toEntity(registerRequestDTO);
-        personRepository.save(person);
+        person = personRepository.save(person);
 
-        String token = UUID.randomUUID().toString();
-        VerificationToken verificationToken = new VerificationToken();
-        verificationToken.setToken(token);
-        verificationToken.setPerson(person);
-        verificationToken.setExpiryDate(LocalDateTime.now().plusMinutes(5));
-        tokenRepository.save(verificationToken);
-
-        emailService.sendVerificationEmail(person.getEmail(), token);
-
+        // VerificationToken işlemlerini ayrı service'e taşıdık
+        var verificationToken = verificationTokenService.createVerificationToken(person);
+        emailService.sendVerificationEmail(person.getEmail(), verificationToken.getToken());
     }
 
+    @Override
     public LoginResponseDTO login(LoginRequestDTO dto) {
         Person person = personRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("E-posta veya şifre hatalı"));
+                .orElseThrow(() -> new UnauthorizedException("E-posta veya şifre hatalı"));
 
         if (!person.getIsActive()) {
-            throw new IllegalStateException("Lütfen e-postanızı doğrulayın.");
+            throw new BadRequestException("Lütfen e-postanızı doğrulayın.");
         }
 
         if (!passwordEncoder.matches(dto.getPassword(), person.getPassword())) {
-            throw new IllegalArgumentException("E-posta veya şifre hatalı");
+            throw new UnauthorizedException("E-posta veya şifre hatalı");
         }
 
         return new LoginResponseDTO(
@@ -75,27 +59,13 @@ public class AuthServiceImpl implements AuthService {
         );
     }
 
+    @Override
     public String confirmToken(String token) {
-        Optional<VerificationToken> optionalToken = tokenRepository.findByToken(token);
-        if (optionalToken.isEmpty()) {
-            return "Geçersiz doğrulama bağlantısı.";
+        try {
+            verificationTokenService.verifyAndActivateUser(token);
+            return "E-posta doğrulaması başarılı.";
+        } catch (BadRequestException e) {
+            return e.getMessage();
         }
-
-        VerificationToken verificationToken = optionalToken.get();
-
-        if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            tokenRepository.delete(verificationToken);
-            return "Doğrulama bağlantısının süresi dolmuş.";
-        }
-
-        Person person = verificationToken.getPerson();
-        person.setIsActive(true);
-        personRepository.save(person);
-        tokenRepository.delete(verificationToken);
-
-        return "E-posta doğrulaması başarılı.";
     }
-
-
-
 }

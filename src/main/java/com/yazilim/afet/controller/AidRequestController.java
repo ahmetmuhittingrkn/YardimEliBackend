@@ -4,26 +4,31 @@ import com.yazilim.afet.dto.AidRequestDetailDTO;
 import com.yazilim.afet.dto.AidSummaryDTO;
 import com.yazilim.afet.dto.CreateAidRequestDTO;
 import com.yazilim.afet.service.AidRequestService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/aid-requests")
+@RequiredArgsConstructor
 public class AidRequestController {
 
     private final AidRequestService aidRequestService;
 
-    public AidRequestController(AidRequestService aidRequestService) {
-        this.aidRequestService = aidRequestService;
-    }
-
     @PostMapping
-    public ResponseEntity<String> createAidRequest(@RequestBody CreateAidRequestDTO dto,
-                                                   @RequestParam Long personId) {
+    public ResponseEntity<Map<String, String>> createAidRequest(
+            @Valid @RequestBody CreateAidRequestDTO dto,
+            @RequestParam Long personId) {
         aidRequestService.createAidRequest(dto, personId);
-        return ResponseEntity.ok("Yardım talebi başarıyla oluşturuldu.");
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "Yardım talebi başarıyla oluşturuldu."));
     }
 
     @GetMapping("/summary")
@@ -41,11 +46,8 @@ public class AidRequestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAidRequest(
             @PathVariable Long id,
-            @RequestParam Long userId // Gerçekte bu JWT'den alınmalı
-    ) {
+            @RequestParam Long userId) {
         aidRequestService.deleteAidRequest(id, userId);
         return ResponseEntity.noContent().build();
     }
-
-
 }

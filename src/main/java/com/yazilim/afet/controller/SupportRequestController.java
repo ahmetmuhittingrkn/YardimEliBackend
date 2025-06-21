@@ -4,52 +4,60 @@ import com.yazilim.afet.dto.CreateSupportRequestDTO;
 import com.yazilim.afet.dto.SupportRequestDetailDTO;
 import com.yazilim.afet.dto.SupportRequestResponseDTO;
 import com.yazilim.afet.dto.SupportSummaryDTO;
-import com.yazilim.afet.entity.SupportRequest;
 import com.yazilim.afet.service.SupportRequestService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/support-requests")
+@RequiredArgsConstructor
 public class SupportRequestController {
 
     private final SupportRequestService supportRequestService;
 
-    public SupportRequestController(SupportRequestService supportRequestService) {
-        this.supportRequestService = supportRequestService;
-    }
-
     @PostMapping
-    public ResponseEntity<Void> createSupportRequest(@RequestBody CreateSupportRequestDTO dto) {
+    public ResponseEntity<Map<String, String>> createSupportRequest(@Valid @RequestBody CreateSupportRequestDTO dto) {
         supportRequestService.createSupportRequest(dto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "Destek talebi başarıyla oluşturuldu."));
     }
 
     @PutMapping("/{id}/approve")
-    public ResponseEntity<String> approveSupportRequest(@PathVariable Long id, @RequestParam Long personId) {
+    public ResponseEntity<Map<String, String>> approveSupportRequest(
+            @PathVariable Long id, 
+            @RequestParam Long personId) {
         supportRequestService.approveSupportRequest(id, personId);
-        return ResponseEntity.ok("Destek talebi onaylandı.");
+        return ResponseEntity.ok(Map.of("message", "Destek talebi onaylandı."));
     }
 
     @PutMapping("/{id}/start")
-    public ResponseEntity<Void> markAsOnTheWay(@PathVariable Long id, @RequestParam Long personId) {
+    public ResponseEntity<Map<String, String>> markAsOnTheWay(
+            @PathVariable Long id, 
+            @RequestParam Long personId) {
         supportRequestService.markAsOnTheWay(id, personId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Map.of("message", "Destek talebi yola çıktı olarak işaretlendi."));
     }
 
     @PutMapping("/{id}/arrived")
-    public ResponseEntity<Void> markAsArrived(@PathVariable Long id, @RequestParam Long personId) {
+    public ResponseEntity<Map<String, String>> markAsArrived(
+            @PathVariable Long id, 
+            @RequestParam Long personId) {
         supportRequestService.markAsArrived(id, personId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Map.of("message", "Destek talebi vardı olarak işaretlendi."));
     }
 
     @DeleteMapping("/{id}/reject")
-    public ResponseEntity<String> rejectSupportRequest(@PathVariable Long id, @RequestParam Long personId) {
+    public ResponseEntity<Map<String, String>> rejectSupportRequest(
+            @PathVariable Long id, 
+            @RequestParam Long personId) {
         supportRequestService.rejectSupportRequest(id, personId);
-        return ResponseEntity.ok("Destek talebi reddedildi ve silindi.");
+        return ResponseEntity.ok(Map.of("message", "Destek talebi reddedildi ve silindi."));
     }
 
     @GetMapping("/pending")
@@ -69,6 +77,4 @@ public class SupportRequestController {
         List<SupportRequestDetailDTO> details = supportRequestService.getSupportRequestDetailsByLocationId(locationId);
         return ResponseEntity.ok(details);
     }
-
-
 }

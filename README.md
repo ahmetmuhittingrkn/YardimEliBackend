@@ -74,8 +74,8 @@ src/main/java/com/yazilim/afet/
 
 ### Adım 1: Projeyi Klonlayın
 ```bash
-git clone https://github.com/kullaniciadi/afet-backend.git
-cd afet-backend
+git clone https://github.com/ahmetmuhittingrkn/YardimEliBackend.git
+cd YardımEliBackend
 ```
 
 ### Adım 2: Veritabanını Hazırlayın
@@ -123,7 +123,7 @@ Content-Type: application/json
 
 {
   "name": "Ahmet",
-  "surname": "Yılmaz",
+  "surname": "Muhittin",
   "tc": "12345678901",
   "email": "ahmet@example.com",
   "phoneNumber": "5551234567",
@@ -148,9 +148,9 @@ Content-Type: application/json
 GET /api/auth/confirm?token=verification_token
 ```
 
-### Yardım Talepleri Endpoints
+### Afetzede Talepleri Endpoints
 
-#### Yardım Talebi Oluşturma
+#### Afetzede Talebi Oluşturma
 ```http
 POST /api/aid-requests?personId=1
 Content-Type: application/json
@@ -167,12 +167,12 @@ Content-Type: application/json
 }
 ```
 
-#### Konum Bazlı Yardım Özeti
+#### Konum Bazlı Afetzede Talepleri Özeti
 ```http
 GET /api/aid-requests/summary?locationId=1
 ```
 
-#### Konum Bazlı Yardım Detayları
+#### Konum Bazlı Afetzede Talebi Detayları
 ```http
 GET /api/aid-requests/location/1
 ```
@@ -222,15 +222,6 @@ GET /api/support-requests/pending
 - **Input Validation**: Tüm giriş verilerinin doğrulanması
 - **Exception Handling**: Güvenli hata yönetimi
 
-## 🧪 Test
-
-```bash
-# Tüm testleri çalıştırma
-mvn test
-
-# Belirli bir test sınıfını çalıştırma
-mvn test -Dtest=AuthServiceTest
-```
 
 ## 📝 Katkıda Bulunma
 
@@ -240,19 +231,11 @@ mvn test -Dtest=AuthServiceTest
 4. Branch'inizi push edin (`git push origin feature/yeni-ozellik`)
 5. Pull Request oluşturun
 
-## 🤝 Katkıda Bulunanlar
-
-- [Adınız](https://github.com/kullaniciadi) - Proje Geliştiricisi
-
-## 📄 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
-
 ## 📞 İletişim
 
-- **E-posta**: your.email@example.com
-- **GitHub**: [@kullaniciadi](https://github.com/kullaniciadi)
-- **LinkedIn**: [Adınız](https://linkedin.com/in/kullaniciadi)
+- **E-posta**: a.muhittin.grkn@gmail.com
+- **GitHub**: [@ahmetmuhittingrkn](https://github.com/ahmetmuhittingrkn)
+- **LinkedIn**: [Ahmet Muhittin Gürkan](https://www.linkedin.com/in/ahmet-muhittin-gürkan-52aab1219/)
 
 ## 🙏 Teşekkürler
 

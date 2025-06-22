@@ -237,10 +237,4 @@ GET /api/support-requests/pending
 - **GitHub**: [@ahmetmuhittingrkn](https://github.com/ahmetmuhittingrkn)
 - **LinkedIn**: [Ahmet Muhittin Gürkan](https://www.linkedin.com/in/ahmet-muhittin-gürkan-52aab1219/)
 
-## 🙏 Teşekkürler
-
-Bu proje, afet durumlarında yardıma ihtiyaç duyan insanlara destek olmak amacıyla geliştirilmiştir. Tüm katkıda bulunanlara teşekkürler!
-
----
-
 ⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın! 

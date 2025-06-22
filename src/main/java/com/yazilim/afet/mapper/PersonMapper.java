@@ -34,7 +34,6 @@ public class PersonMapper {
         person.setTc(registerRequestDTO.getTc());
         person.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
 
-        // ✅ Ek güvenlik kontrolü: stkMember false ama stkName gönderilmişse hata fırlat
         if (Boolean.FALSE.equals(registerRequestDTO.getStkMember()) && registerRequestDTO.getStkName() != null) {
             throw new BadRequestException("STK üyesi değilseniz 'stkName' alanı gönderilmemelidir.");
         }

@@ -27,7 +27,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new InMemoryUserDetailsManager(); // işte bu doğru tanım
+        return new InMemoryUserDetailsManager();
     }
 
     @Bean

@@ -9,13 +9,13 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateSupportRequestDTO {
 
-    private Long personId; // Mobil cihazdan gelecek
+    private Long personId;
     private Long locationId;
 
     private String description;
     private Integer arrivalTimeMinutes;
     private String originCity;
 
-    private List<SupportItemDTO> supportItems; // Yardım türü ve miktarları
+    private List<SupportItemDTO> supportItems;
 
 }

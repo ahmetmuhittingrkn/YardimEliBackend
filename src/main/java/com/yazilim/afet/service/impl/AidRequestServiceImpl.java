@@ -44,11 +44,9 @@ public class AidRequestServiceImpl implements AidRequestService {
         Location location = locationRepository.findById(dto.getLocationId())
                 .orElseThrow(() -> new NotFoundException("Konum bulunamadı"));
 
-        // Mapper kullanarak entity oluştur
         AidRequest aidRequest = aidRequestMapper.toEntity(dto, person, location);
         aidRequest = aidRequestRepository.save(aidRequest);
 
-        // AidType'ları toplu olarak al
         List<Long> aidTypeIds = dto.getAidItems().stream()
                 .map(AidItemDTO::getAidTypeId)
                 .collect(Collectors.toList());
@@ -59,7 +57,6 @@ public class AidRequestServiceImpl implements AidRequestService {
             throw new NotFoundException("Bazı yardım türleri bulunamadı");
         }
 
-        // Mapper kullanarak AidRequestType'ları oluştur
         List<AidRequestType> requestTypes = aidRequestMapper.toAidRequestTypes(
                 dto.getAidItems(), aidRequest, aidTypes);
         

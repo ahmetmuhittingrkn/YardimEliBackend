@@ -41,10 +41,8 @@ public class SupportRequestServiceImpl implements SupportRequestService {
         Location location = locationRepository.findById(dto.getLocationId())
                 .orElseThrow(() -> new NotFoundException("Konum bulunamadı"));
 
-        // Mapper kullanarak entity oluştur
         SupportRequest supportRequest = supportRequestMapper.toEntity(dto, person, location);
 
-        // AidType'ları toplu olarak al
         List<Long> aidTypeIds = dto.getSupportItems().stream()
                 .map(SupportItemDTO::getAidTypeId)
                 .collect(Collectors.toList());
@@ -55,7 +53,6 @@ public class SupportRequestServiceImpl implements SupportRequestService {
             throw new NotFoundException("Bazı yardım türleri bulunamadı");
         }
 
-        // Mapper kullanarak SupportRequestType'ları oluştur
         List<SupportRequestType> requestTypes = supportRequestMapper.toSupportRequestTypes(
                 dto.getSupportItems(), supportRequest, aidTypes);
 

@@ -33,7 +33,6 @@ public class AuthServiceImpl implements AuthService {
         Person person = personMapper.toEntity(registerRequestDTO);
         person = personRepository.save(person);
 
-        // VerificationToken işlemlerini ayrı service'e taşıdık
         var verificationToken = verificationTokenService.createVerificationToken(person);
         emailService.sendVerificationEmail(person.getEmail(), verificationToken.getToken());
     }
